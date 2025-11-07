@@ -2,19 +2,27 @@
 
 import { useCallback, useEffect, useState } from 'react'
 import { useCanvas } from '@/hooks/useCanvas'
+import { useGameLoop } from '@/hooks/useGameLoop'
 import { useMouseInteraction } from '@/hooks/useMouseInteraction'
 import { Camera } from '@/lib/canvas/Camera'
 import { Grid } from '@/lib/game/Grid'
+import { GameEngine } from '@/lib/game/GameEngine'
 import { render } from '@/lib/canvas/renderer'
+
+interface CanvasProps {
+  isRunning: boolean
+  speed: number
+  clearTrigger: number
+}
 
 /**
  * Canvas component for rendering the Game of Life grid
- * Handles rendering, camera controls (zoom), and grid display
+ * Handles rendering, camera controls (zoom), simulation, and grid display
  */
-export function Canvas() {
+export function Canvas({ isRunning, speed, clearTrigger }: CanvasProps) {
   const { canvasRef, width, height, context } = useCanvas()
   const [camera] = useState(() => new Camera(0, 0, 1.0))
-  const [grid] = useState(() => {
+  const [grid, setGrid] = useState(() => {
     // Create test grid with a few cells to verify rendering
     const testGrid = new Grid()
     testGrid.addCell(0, 0)
@@ -24,6 +32,7 @@ export function Canvas() {
     testGrid.addCell(1, -1)
     return testGrid
   })
+  const [_generation, setGeneration] = useState(0)
 
   // Render function
   const renderCanvas = useCallback(() => {
@@ -31,6 +40,26 @@ export function Canvas() {
 
     render(context, camera, grid.getState(), width, height)
   }, [context, camera, grid, width, height])
+
+  // Handle simulation step (compute next generation)
+  const handleStep = useCallback(() => {
+    setGrid((currentGrid) => {
+      const nextGrid = GameEngine.computeNextGeneration(currentGrid)
+      return nextGrid
+    })
+    setGeneration((gen) => gen + 1)
+  }, [])
+
+  // Game loop - runs when isRunning is true
+  useGameLoop(handleStep, speed, isRunning)
+
+  // Handle clear trigger - clear grid and reset generation when clearTrigger changes
+  useEffect(() => {
+    if (clearTrigger > 0) {
+      setGrid(new Grid())
+      setGeneration(0)
+    }
+  }, [clearTrigger])
 
   // Handle cell toggle (left-click drawing)
   const handleCellToggle = useCallback(

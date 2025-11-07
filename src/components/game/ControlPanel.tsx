@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { Pause, Play, Trash2 } from 'lucide-react'
 import { Stats } from './Stats'
 import { Button } from '@/components/ui/button'
@@ -14,16 +13,28 @@ import {
 } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 
-export function ControlPanel() {
-  const [isRunning, setIsRunning] = useState(false)
-  const [speed, setSpeed] = useState([30])
+interface ControlPanelProps {
+  isRunning: boolean
+  speed: number
+  onToggleRunning: () => void
+  onSpeedChange: (speed: number) => void
+  onClear: () => void
+}
+
+export function ControlPanel({
+  isRunning,
+  speed,
+  onToggleRunning,
+  onSpeedChange,
+  onClear,
+}: ControlPanelProps) {
 
   return (
     <div className="w-full border-b bg-card/50 backdrop-blur-sm">
       <div className="flex items-center justify-between gap-4 px-6 py-4">
         <div className="flex items-center gap-4">
           <Button
-            onClick={() => setIsRunning(!isRunning)}
+            onClick={onToggleRunning}
             variant="default"
             size="default"
             className="gap-2"
@@ -48,15 +59,15 @@ export function ControlPanel() {
               Speed:
             </span>
             <Slider
-              value={speed}
-              onValueChange={setSpeed}
+              value={[speed]}
+              onValueChange={(value) => onSpeedChange(value[0])}
               min={1}
               max={60}
               step={1}
               className="w-40"
             />
             <span className="text-sm font-mono font-semibold w-12 text-right">
-              {speed[0]} <span className="text-muted-foreground">gen/s</span>
+              {speed} <span className="text-muted-foreground">gen/s</span>
             </span>
           </div>
 
@@ -71,7 +82,7 @@ export function ControlPanel() {
             </SelectContent>
           </Select>
 
-          <Button variant="destructive" size="default" className="gap-2">
+          <Button onClick={onClear} variant="destructive" size="default" className="gap-2">
             <Trash2 className="size-4" />
             Clear
           </Button>

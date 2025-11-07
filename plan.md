@@ -5,17 +5,23 @@
 **Completed Phases:**
 - ✅ **Phase 1**: Foundation & UI Components (Control panel, stats, dark mode)
 - ✅ **Phase 2**: Canvas Setup & Rendering System (Grid rendering, zoom, camera)
+- ✅ **Phase 3**: User Interaction (Drawing & Panning)
+- ✅ **Phase 4**: Game Logic & Simulation (Conway's rules, game loop, Start/Stop)
 
 **Next Phase:**
-- 🚧 **Phase 3**: User Interaction (Drawing & Panning) - Ready to implement
+- 🚧 **Phase 5**: Advanced Features (Speed control, stats wiring, patterns) - Ready to implement
 
 **Working Features:**
 - Dark mode enforced throughout
-- Control panel with Start/Stop, Speed slider, Clear button, Pattern selector placeholder
-- Live stats display (generation count, alive cells)
+- Control panel with Start/Stop, Speed slider (1-60 gen/s), Clear button
 - Canvas with visible grid lines (15px cells)
 - Mouse wheel zoom (0.5x - 4.0x) around cursor
-- Test cells rendered at origin to verify rendering
+- Left-click drawing (toggle cells on/off with continuous drag)
+- Right-click panning (move viewport)
+- Conway's Game of Life simulation with requestAnimationFrame loop
+- Smooth speed control from 1 to 60 generations per second
+- Start/Stop simulation control
+- Clear button (stops simulation and clears grid)
 
 ---
 
