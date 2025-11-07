@@ -3,22 +3,24 @@ import type { Camera } from './Camera'
 import type { GridState } from '../game/types'
 
 /**
- * Get a theme color from CSS variables
+ * Get a theme color from CSS variables with fallback
  */
-function getThemeColor(variableName: string): string {
-  const value = getComputedStyle(document.documentElement).getPropertyValue(
-    variableName,
-  )
-  return value.trim()
-}
+function getColor(variableName: string, fallback: string): string {
+  try {
+    const root = document.documentElement
+    const computedStyle = getComputedStyle(root)
+    const value = computedStyle.getPropertyValue(variableName).trim()
 
-/**
- * Convert oklch color to canvas-compatible color
- * For simplicity, we'll use the raw oklch value and let the browser handle it
- */
-function getColor(variableName: string): string {
-  const oklch = getThemeColor(variableName)
-  return oklch ? `oklch(${oklch})` : '#000'
+    if (!value) return fallback
+
+    // If it's already in oklch format, use it directly
+    if (value.includes('oklch')) return value
+
+    // Otherwise wrap it in oklch()
+    return `oklch(${value})`
+  } catch {
+    return fallback
+  }
 }
 
 /**
@@ -29,7 +31,7 @@ export function clearCanvas(
   width: number,
   height: number,
 ): void {
-  const bgColor = getColor('--background')
+  const bgColor = getColor('--background', '#0a0a0a')
   ctx.fillStyle = bgColor
   ctx.fillRect(0, 0, width, height)
 }
@@ -53,7 +55,7 @@ export function drawGrid(
   const endX = Math.ceil(bottomRight.x)
   const endY = Math.ceil(bottomRight.y)
 
-  const borderColor = getColor('--border')
+  const borderColor = getColor('--border', '#333')
   ctx.strokeStyle = borderColor
   ctx.lineWidth = 1
 
@@ -98,7 +100,7 @@ export function drawCells(
   const endX = Math.ceil(bottomRight.x)
   const endY = Math.ceil(bottomRight.y)
 
-  const primaryColor = getColor('--primary')
+  const primaryColor = getColor('--primary', '#ffffff')
   ctx.fillStyle = primaryColor
 
   // Draw each alive cell if it's in the visible area
