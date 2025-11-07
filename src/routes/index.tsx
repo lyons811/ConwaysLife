@@ -1,11 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { ControlPanel } from '@/components/game/ControlPanel'
+import { Canvas } from '@/components/game/Canvas'
 
 export const Route = createFileRoute('/')({ component: Home })
 
 function Home() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-slate-900 via-slate-800 to-slate-900">
-      <h1 className="text-6xl font-bold text-white">Hello World</h1>
+    <div className="flex flex-col h-screen bg-background">
+      <ControlPanel />
+      <Canvas />
     </div>
   )
 }
